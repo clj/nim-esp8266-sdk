@@ -1,10 +1,10 @@
 # nim-esp8266-sdk
 
-A Nim wrapper for the NIM8266 NON-OS SDK
+A Nim wrapper for the [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266_NONOS_SDK)
 
 ## Installing
 
-Download pre-built SDKs from https://github.com/clj/nim-esp8266-sdk/releases.
+Download pre-built Nim ESP8266 SDK releases from https://github.com/clj/nim-esp8266-sdk/releases.
 
 ## Building
 
