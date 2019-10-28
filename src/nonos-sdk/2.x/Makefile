@@ -11,7 +11,7 @@ endif
 ifneq ($(findstring README.md,$(wildcard $(SDK_DIR)/*)),README.md)
 $(error This doesn't look like an ESP8266 NON-OS SDK dir)
 else
-ifneq ($(findstring ESP8266_NONOS_SDK,$(file < $(SDK_DIR)/README.md)),ESP8266_NONOS_SDK)
+ifneq ($(findstring ESP8266_NONOS_SDK,$(shell cat $(SDK_DIR)/README.md)),ESP8266_NONOS_SDK)
 $(error This doesn't look like an ESP8266 NON-OS SDK dir)
 endif
 endif
