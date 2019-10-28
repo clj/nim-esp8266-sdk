@@ -1,5 +1,7 @@
 # nim-esp8266-sdk
 
+[![Build Status](https://travis-ci.org/clj/nim-esp8266-sdk.svg?branch=master)](https://travis-ci.org/clj/nim-esp8266-sdk)
+
 A Nim wrapper for the [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266_NONOS_SDK)
 
 ## Installing
