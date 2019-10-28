@@ -1,0 +1,55 @@
+--- SDK/include/osapi.h	2018-02-06 12:45:58.000000000 +0000
++++ BUILD/osapi.h	2019-08-22 14:35:44.000000000 +0000
+@@ -25,18 +25,24 @@
+ #ifndef _OSAPI_H_
+ #define _OSAPI_H_
+ 
++#ifndef C2NIM
++
+ #include <string.h>
+ #include "os_type.h"
+ #include "user_config.h"
++#endif /* C2NIM */
+ 
+ void ets_bzero(void *s, size_t n);
+ void ets_delay_us(uint32_t us);
+ void ets_install_putc1(void (*p)(char c));
+ 
++
+ #define os_bzero ets_bzero
+ #define os_delay_us ets_delay_us
+ #define os_install_putc1 ets_install_putc1
+ 
++#ifndef C2NIM
++
+ int ets_memcmp(const void *str1, const void *str2, unsigned int nbyte);
+ void *ets_memcpy(void *dest, const void *src, unsigned int nbyte);
+ void *ets_memmove(void *dest, const void *src, unsigned int nbyte);
+@@ -87,6 +93,27 @@
+ #define os_printf	os_printf_plus
+ #endif
+ 
++#else /* C2NIM */
++int ets_sprintf(char *str, const char *format, ...);
++#define os_sprintf  ets_sprintf
++
++#@
++import os_type
++
++proc os_timer_arm*(ptimer: ptr os_timer_t, milliseconds: uint32, repeat_flag: bool)
++    {. importc: "os_timer_arm", header: "osapi.h", noconv .}
++proc os_timer_disarm*(ptimer: ptr os_timer_t)
++    {. importc: "os_timer_disarm", header: "osapi.h", noconv .}
++proc os_timer_setfn*(timer: ptr os_timer_t, pfunction: os_timer_func_t, parg: pointer)
++    {. importc: "os_timer_setfn", header: "osapi.h", noconv .}
++proc os_printf*(formatstr: cstring) {.header: "<osapi.h>", varargs.}
++#proc os_sprintf*(str: cstring, formatstr: cstring): int {.header: "<osapi.h>", varargs.}
++@#
++
++int os_memcmp(const void *s1, const void *s2, size_t n);
++void *os_memcpy(void *dest, const void *src, unsigned int nbyte);
++
++#endif /* C2NIM */
+ unsigned long os_random(void);
+ int os_get_random(unsigned char *buf, size_t len);
+ 

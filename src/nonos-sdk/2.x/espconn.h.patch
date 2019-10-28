@@ -1,0 +1,37 @@
+--- SDK/include/espconn.h	2018-02-06 12:45:58.000000000 +0000
++++ BUILD/espconn.h	2019-08-22 08:26:00.000000000 +0000
+@@ -25,6 +25,10 @@
+ #ifndef __ESPCONN_H__
+ #define __ESPCONN_H__
+ 
++// ESPSDK
++#include "ip_addr.h"
++// END ESPSDK
++
+ typedef sint8 err_t;
+ 
+ typedef void *espconn_handle;
+@@ -60,6 +64,7 @@
+     /* ESPCONN_UDP Group */
+     ESPCONN_UDP        = 0x20,
+ };
++typedef enum espconn_type espconn_type; // ESP SDK
+ 
+ /** Current state of the espconn. Non-TCP espconn are always in state ESPCONN_NONE! */
+ enum espconn_state {
+@@ -71,6 +76,7 @@
+     ESPCONN_READ,
+     ESPCONN_CLOSE
+ };
++typedef enum espconn_state espconn_state; //ESP SDK
+ 
+ typedef struct _esp_tcp {
+     int remote_port;
+@@ -116,6 +122,7 @@
+     uint8 link_cnt;
+     void *reverse;
+ };
++typedef struct espconn espconn; // ESP SDK
+ 
+ enum espconn_option{
+ 	ESPCONN_START = 0x00,

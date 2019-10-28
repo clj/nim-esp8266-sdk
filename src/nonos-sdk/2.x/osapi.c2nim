@@ -1,0 +1,2 @@
+#mangle uint16_t uint16
+#mangle uint32_t uint32

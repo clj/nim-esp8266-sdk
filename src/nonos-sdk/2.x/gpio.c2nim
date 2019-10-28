@@ -1,0 +1,4 @@
+// #returns uint32 GPIO_PIN_ADDR
+x;
+// #returns uint32 GPIO_INPUT_GET
+x;

@@ -1,0 +1,24 @@
+# nim-esp8266-sdk
+
+A Nim wrapper for the NIM8266 NON-OS SDK
+
+## Installing
+
+Download pre-built SDKs from https://github.com/clj/nim-esp8266-sdk/releases.
+
+## Building
+
+* `make C2NIM=...`
+* `make install` or `make install INSTALL_DIR=...`
+
+C2NIM should point to a built copy of [c2nim esp8266](https://github.com/clj/c2nim-esp8266) and defaults to c2nim_esp8266. The default installation directory is `/opt/nim-esp8266-sdk`.
+
+### Dependencies
+
+* [c2nim_esp8266](https://github.com/clj/c2nim-esp8266)
+* [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266_NONOS_SDK)
+  - Downloaded automatically by the Makefile
+
+## License
+
+The files in this repository are licensed under the MIT license, see the LICENSE file.

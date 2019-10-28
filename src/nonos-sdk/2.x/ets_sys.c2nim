@@ -1,0 +1,2 @@
+#mangle uint32_t uint32
+#mangle _ETSTIMER_ ETSTimer

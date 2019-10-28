@@ -1,0 +1,28 @@
+// #as template GPIO_ID_PIN
+x;
+// #returns uint32 GPIO_ID_PIN
+
+x;
+// #returns uint32 ETS_UNCACHED_ADDR
+x;
+// #returns uint32 ETS_CACHED_ADDR
+
+
+// #returns uint32 READ_PERI_REG
+x;
+// #returns uint32 GET_PERI_REG_BITS
+x;
+// #returns uint32 GPIO_REG_READ
+x;
+// #returns uint32 GPIO_PIN_PAD_DRIVER_GET
+x;
+// #returns uint32 GPIO_PIN_PAD_DRIVER_SET
+
+
+// #returns uint32 GPIO_PIN_SOURCE_GET
+x;
+// #returns uint32 GPIO_PIN_SOURCE_SET
+x;
+// #returns uint32 RTC_REG_READ
+
+#mangle uint32_t uint32
