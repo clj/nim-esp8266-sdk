@@ -8,10 +8,11 @@ TAR		?= tar
 C2NIM		?= c2nim_esp8266
 INSTALL_DIR     ?= /opt/nim-esp8266-sdk
 
-
+ifneq ($(MAKECMDGOALS),clean)
 c2nim_found := $(shell command -v $(C2NIM) 2> /dev/null)
 ifndef c2nim_found
 $(error $(C2NIM) command not found)
+endif
 endif
 
 # Set path related variables to have absolute paths
