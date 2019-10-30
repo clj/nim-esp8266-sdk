@@ -16,12 +16,18 @@ script:
 - make C2NIM=c2nim-esp8266/c2nim_esp8266
 - make C2NIM=c2nim-esp8266/c2nim_esp8266 dist
 
+before_deploy:
+- export RELEASE_DATE=${TRAVIS_TAG:8}
+
 deploy:
   provider: releases
   api_key:
     secure: i6e3aqIDPUcpgOsLUtR3XkkEaoAwKu7vE6gDBk5PTf0QUyvKT99y8v/UzS2m35SDf7h40DwRMPTI4+yVxbMBgwXMx9XkTBXMiSgD17CwkFSrQVbNo6odl5viblymN5cSnEqi9lgcZbJnfZiICXwCF4uYjvjyyT5DoYGvFFD513APNGPXe0+oPrxAuiE3vX+drE2lm5YujI7Lgk9v69pmZjp6v3xOeqGp5bWZT6BhQbZSgbVGPPs05eespQZsai+g4tNvoxEJQGatJMzBmtHpLhBFh9PBMpaMtsMo3Bqqlle8vmr06spVHJNeAzA+SkAEvO5/b5D+bWvbkYJQqUyxvnRoB4eU0hN2VIH1bUB+obzsJf9yNAkv8xOyWSAXDIleg0bVrnhR6dYsgv1mdWPtWuk38k90RWDMYJpIjvRSyyZ02+VV/PvQnSg+m//e5lh9UdTSKCYeJbmdcnMTr4GLRFT2LIDIQwFA42Ynb25mgri68Ck02Yro8e6MFnnxf3mEIwz3ZVIINnd6fWgnbDyhhWwswZVs21i5yD5GiiH5zINuCLaUEF3kbQrcDYm0GrE/kBFyb/4okblpegwHirN8M/ES/nidcoNjCgVyyRp2f5sVpK59+UYtcXRFcQlS/mLpmfOq+ThDG34aD3Pcz7bvOYu/KoD5fT9p3pkEjQ1U17s=
   file_glob: true
-  file: build/nim_esp8266_nonos_sdk-*
+  file: dist/nim_esp8266_nonos_sdk-*
+  edge: true
+  release_notes_file: 'release-notes/${RELEASE_DATE}.md'
+  name: "Release ${RELEASE_DATE}"
   skip_cleanup: true
   on:
     repo: clj/nim-esp8266-sdk
