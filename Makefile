@@ -2,6 +2,7 @@ SDK_VERSIONS	?= 2.2.1 2.2.0 2.1.0
 CURL		?= curl
 SDK_BASE_URL	?= https://github.com/espressif/ESP8266_NONOS_SDK/archive/
 BUILD_DIR	?= build
+DIST_DIR	?= dist
 SRC_DIR		?= src/nonos-sdk
 SHASUM		?= shasum
 TAR		?= tar
@@ -53,7 +54,7 @@ endif
 .PHONY: all dist install install-nim
 all: $(sdk_build_dirs)
 
-dist: $(BUILD_DIR)/$(release_name).tar.gz $(BUILD_DIR)/$(release_name).zip
+dist: $(DIST_DIR)/$(release_name).tar.gz $(DIST_DIR)/$(release_name).zip
 
 install: $(foreach version,$(SDK_VERSIONS),$(nonos_sdk_build_dir)/$(version)) |install-nim install-link-latest
 	$(vecho) "MKDIR   $(INSTALL_DIR)"
@@ -89,13 +90,15 @@ install-nim-dev:
 	$(vecho) "LN      $(INSTALL_DIR)/nim-sdk/esp8266"
 	$(Q) ln -sf $(abspath nim) $(INSTALL_DIR)/nim-sdk/esp8266
 
-$(BUILD_DIR)/$(release_name).tar.gz: $(sdk_build_dirs)
+$(DIST_DIR)/$(release_name).tar.gz: INSTALL_DIR=$(DIST_DIR)/nim-esp8266-sdk
+$(DIST_DIR)/$(release_name).tar.gz: install
 	$(vecho) "TAR     $@"
-	$(Q) tar -czf $@ -C $(BUILD_DIR) nonos-sdk
+	$(Q) tar -czf $@ -C $(DIST_DIR) nim-esp8266-sdk
 
-$(BUILD_DIR)/$(release_name).zip: $(sdk_build_dirs)
+$(DIST_DIR)/$(release_name).zip: INSTALL_DIR=$(DIST_DIR)/nim-esp8266-sdk
+$(DIST_DIR)/$(release_name).zip: install
 	$(vecho) "ZIP     $@"
-	$(Q) cd $(BUILD_DIR) && zip -qr $(@F) nonos-sdk
+	$(Q) cd $(DIST_DIR) && zip -qr $(@F) nim-esp8266-sdk
 
 .PHONY: $(sdk_build_dirs)
 $(sdk_build_dirs):
@@ -136,5 +139,5 @@ $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): sdk_
 
 .PHONY: clean
 clean:
-	$(vecho) "CLEAN   $(BUILD_DIR)"
-	$(Q) rm -rf $(BUILD_DIR)
+	$(vecho) "CLEAN   $(BUILD_DIR) $(DIST_DIR)"
+	$(Q) rm -rf $(BUILD_DIR) $(DIST_DIR)
