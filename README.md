@@ -8,6 +8,10 @@ A Nim wrapper for the [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266
 
 Download pre-built Nim ESP8266 SDK releases from https://github.com/clj/nim-esp8266-sdk/releases.
 
+## Examples
+
+Examples can be found at: https://github.com/clj/nim-esp8266-examples
+
 ## Building
 
 * `make C2NIM=...`
