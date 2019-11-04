@@ -35,9 +35,11 @@ V ?= $(VERBOSE)
 ifeq ("$(V)","1")
 Q :=
 vecho := @true
+silence :=
 else
 Q := @
 vecho := @echo
+silence := > /dev/null 2>&1
 endif
 
 .SECONDARY: $(sdk_targets)
@@ -60,11 +62,11 @@ $(BUILD_DIR)/%.h: $(SDK_DIR)/include/%.h
 
 $(BUILD_DIR)/%.nim: %.c2nim $(BUILD_DIR)/%.h
 	$(vecho) "C2NIM   $@"
-	$(Q) $(C2NIM) --cdecl --header $^ -o=$@ > /dev/null 2>&1
+	$(Q) $(C2NIM) --cdecl --header $^ -o=$@ $(silence)
 
 $(BUILD_DIR)/%.nim: $(BUILD_DIR)/%.h
 	$(vecho) "C2NIM   $@"
-	$(Q) $(C2NIM) --cdecl --header $< -o=$@ > /dev/null 2>&1
+	$(Q) $(C2NIM) --cdecl --header $< -o=$@ $(silence)
 
 $(sdk_targets): | $(BUILD_DIR)
 $(nim_targets): | $(BUILD_DIR)
