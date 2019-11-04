@@ -9,7 +9,8 @@ TAR		?= tar
 C2NIM		?= c2nim_esp8266
 INSTALL_DIR     ?= /opt/nim-esp8266-sdk
 
-ifneq ($(MAKECMDGOALS),clean)
+NO_C2NIM_GOALS := clean mostlyclean
+ifeq (,$(filter $(NO_C2NIM_GOALS),$(MAKECMDGOALS)))
 c2nim_found := $(shell command -v $(C2NIM) 2> /dev/null)
 ifndef c2nim_found
 $(error $(C2NIM) command not found)
@@ -137,7 +138,11 @@ $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): | $(
 $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): sdk_dir=$(abspath $(download_dir)/ESP8266_NONOS_SDK-$(version))))
 $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): sdk_version=$(version)))
 
-.PHONY: clean
+.PHONY: clean mostlyclean
 clean:
 	$(vecho) "CLEAN   $(BUILD_DIR) $(DIST_DIR)"
 	$(Q) rm -rf $(BUILD_DIR) $(DIST_DIR)
+
+mostlyclean:
+	$(vecho) "CLEAN   $(BUILD_DIR)/nonos-sdk"
+	$(Q) rm -rf $(BUILD_DIR)/nonos-sdk
