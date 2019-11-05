@@ -6,13 +6,13 @@ services:
 - docker
 
 before_install:
-- docker pull nimlang/nim
+- docker pull nimesp/esp8266-gcc
 - git clone --recurse-submodules --depth 10 --shallow-submodules https://github.com/clj/c2nim-esp8266.git
 
 script:
-- docker run nimlang/nim nim --version
-- docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimlang/nim sh -c "nimble bootstrap -y"
-- docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimlang/nim sh -c "nimble build -y"
+- docker run nimesp/esp8266-gcc nim --version
+- docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimesp/esp8266-gcc sh -c "nimble bootstrap -y"
+- docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimesp/esp8266-gcc sh -c "nimble build -y"
 - make C2NIM=c2nim-esp8266/c2nim_esp8266
 - make C2NIM=c2nim-esp8266/c2nim_esp8266 dist
 
