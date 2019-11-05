@@ -39,7 +39,6 @@ nim_sdk_files = $(wildcard nim/*.nim)
 
 release_tag = $(shell (git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || git describe --tags) | sed -e "s/release-//")
 release_name = nim_esp8266_nonos_sdk-$(release_tag)
-sdk_latest = $(word 1,$(SDK_VERSIONS))
 
 V ?= $(VERBOSE)
 ifeq ("$(V)","1")
@@ -57,7 +56,7 @@ all: $(sdk_build_dirs)
 
 dist: $(DIST_DIR)/$(release_name).tar.gz $(DIST_DIR)/$(release_name).zip
 
-install: $(foreach version,$(SDK_VERSIONS),$(nonos_sdk_build_dir)/$(version)) |install-nim install-link-latest
+install: $(foreach version,$(SDK_VERSIONS),$(nonos_sdk_build_dir)/$(version)) |install-nim
 	$(vecho) "MKDIR   $(INSTALL_DIR)"
 	$(Q) mkdir -p $(INSTALL_DIR)
 	$(Q) for version in $(SDK_VERSIONS) ; do \
@@ -72,11 +71,7 @@ install-nim: $(nim_sdk_files)
 	$(vecho) "COPY    $(INSTALL_DIR)/nim-sdk"
 	$(Q) cp -r $^ $(INSTALL_DIR)/nim-sdk/esp8266
 
-install-link-latest:
-	$(vecho) "LN      $(INSTALL_DIR)/latest -> $(sdk_latest)"
-	$(Q) ln -sf $(sdk_latest) $(INSTALL_DIR)/latest
-
-install-dev: $(foreach version,$(SDK_VERSIONS),$(nonos_sdk_build_dir)/$(version)) |install-nim-dev install-link-latest
+install-dev: $(foreach version,$(SDK_VERSIONS),$(nonos_sdk_build_dir)/$(version)) |install-nim-dev
 	$(vecho) "MKDIR   $(INSTALL_DIR)"
 	$(Q) mkdir -p $(INSTALL_DIR)
 	$(Q) for version in $(SDK_VERSIONS) ; do \
