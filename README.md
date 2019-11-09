@@ -4,6 +4,14 @@
 
 A Nim wrapper for the [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266_NONOS_SDK)
 
+## Supported SDK versions
+
+Currently the following SDK versions are supported:
+
+* 2.1.0
+* 2.2.0
+* 2.2.1
+
 ## Installing
 
 Download pre-built Nim ESP8266 SDK releases from https://github.com/clj/nim-esp8266-sdk/releases.
@@ -24,6 +32,10 @@ C2NIM should point to a built copy of [c2nim esp8266](https://github.com/clj/c2n
 * [c2nim_esp8266](https://github.com/clj/c2nim-esp8266)
 * [ESP8266 NON-OS SDKs](https://github.com/espressif/ESP8266_NONOS_SDK)
   - Downloaded automatically by the Makefile
+* [tuanpmt/esp_mqtt](https://github.com/tuanpmt/esp_mqtt)
+  - Downloaded automatically by the Makefile
+  - `ESP_MQTT_URL` can be
+  - The project has not been updated in a while so please check the [issue tracker](https://github.com/tuanpmt/esp_mqtt/issues) if you encounter problems
 
 ## License
 

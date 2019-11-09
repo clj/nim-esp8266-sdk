@@ -1,0 +1,7 @@
+#mangle uint8_t uint8
+#mangle uint16_t uint16
+#mangle uint32_t uint32
+#mangle BOOL bool
+
+// #params MQTT_Publish topic cconststring, data cconststring
+// #params MqttDataCallback topic cconststring, data cconststring

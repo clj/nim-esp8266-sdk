@@ -13,7 +13,7 @@ script:
 - docker run nimesp/esp8266-gcc nim --version
 - docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimesp/esp8266-gcc sh -c "nimble bootstrap -y"
 - docker run -v "$(pwd):/project" -w /project/c2nim-esp8266 nimesp/esp8266-gcc sh -c "nimble build -y"
-- make C2NIM=c2nim-esp8266/c2nim_esp8266
+- docker run -v "$(pwd):/project" -w /project/ nimesp/esp8266-gcc make C2NIM=c2nim-esp8266/c2nim_esp8266
 - make C2NIM=c2nim-esp8266/c2nim_esp8266 dist
 
 before_deploy:

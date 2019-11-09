@@ -1,0 +1,130 @@
+31a32
+> #ifndef C2NIM
+33a35
+> #include "queue.h"
+34a37
+> #endif
+36c39,45
+< #include "queue.h"
+---
+> #ifdef C2NIM
+> #@
+> import esp8266/types
+> @#
+> #endif
+> 
+> #ifndef C2NIM
+89a99,100
+> #endif
+> 
+91,92c102
+< typedef void (*MqttCallback)(uint32_t *args);
+< typedef void (*MqttDataCallback)(uint32_t *args, const char* topic, uint32_t topic_len, const char *data, uint32_t lengh);
+---
+> #ifndef C2NIM
+94c104,109
+< typedef struct  {
+---
+> typedef struct MQTT_Client MQTT_Client;
+> 
+> typedef void (*MqttCallback)(MQTT_Client *client);
+> typedef void (*MqttDataCallback)(MQTT_Client *client, const char* topic, uint32_t topic_len, const char *data, uint32_t lengh);
+> 
+> struct MQTT_Client {
+114c129,139
+< } MQTT_Client;
+---
+> };
+> #else
+> 
+> #@
+> type
+>   MQTT_Client* {.importc: "MQTT_Client", header: "mqtt.h" final, pure, incompleteStruct.} = object
+> @#
+> 
+> typedef void (*MqttCallback)(MQTT_Client *client);
+> typedef void (*MqttDataCallback)(MQTT_Client *client, const char* topic, uint32_t topic_len, const char *data, uint32_t lengh);
+> #endif
+133,146c158,224
+< void ICACHE_FLASH_ATTR MQTT_InitConnection(MQTT_Client *mqttClient, uint8_t* host, uint32_t port, uint8_t security);
+< BOOL ICACHE_FLASH_ATTR MQTT_InitClient(MQTT_Client *mqttClient, uint8_t* client_id, uint8_t* client_user, uint8_t* client_pass, uint32_t keepAliveTime, uint8_t cleanSession);
+< void ICACHE_FLASH_ATTR MQTT_DeleteClient(MQTT_Client *mqttClient);
+< void ICACHE_FLASH_ATTR MQTT_InitLWT(MQTT_Client *mqttClient, uint8_t* will_topic, uint8_t* will_msg, uint8_t will_qos, uint8_t will_retain);
+< void ICACHE_FLASH_ATTR MQTT_OnConnected(MQTT_Client *mqttClient, MqttCallback connectedCb);
+< void ICACHE_FLASH_ATTR MQTT_OnDisconnected(MQTT_Client *mqttClient, MqttCallback disconnectedCb);
+< void ICACHE_FLASH_ATTR MQTT_OnPublished(MQTT_Client *mqttClient, MqttCallback publishedCb);
+< void ICACHE_FLASH_ATTR MQTT_OnTimeout(MQTT_Client *mqttClient, MqttCallback timeoutCb);
+< void ICACHE_FLASH_ATTR MQTT_OnData(MQTT_Client *mqttClient, MqttDataCallback dataCb);
+< BOOL ICACHE_FLASH_ATTR MQTT_Subscribe(MQTT_Client *client, char* topic, uint8_t qos);
+< BOOL ICACHE_FLASH_ATTR MQTT_UnSubscribe(MQTT_Client *client, char* topic);
+< void ICACHE_FLASH_ATTR MQTT_Connect(MQTT_Client *mqttClient);
+< void ICACHE_FLASH_ATTR MQTT_Disconnect(MQTT_Client *mqttClient);
+< BOOL ICACHE_FLASH_ATTR MQTT_Publish(MQTT_Client *client, const char* topic, const char* data, int data_length, int qos, int retain);
+---
+> #ifndef C2NIM
+> void MQTT_InitConnection(MQTT_Client *mqttClient, uint8_t* host, uint32_t port, uint8_t security);
+> BOOL MQTT_InitClient(MQTT_Client *mqttClient, uint8_t* client_id, uint8_t* client_user, uint8_t* client_pass, uint32_t keepAliveTime, uint8_t cleanSession);
+> #else
+> void MQTT_InitConnection(MQTT_Client *mqttClient, char* host, uint32_t port, uint8_t security);
+> BOOL MQTT_InitClient(MQTT_Client *mqttClient, char* client_id, char* client_user, char* client_pass, uint32_t keepAliveTime, uint8_t cleanSession);
+> #endif
+> void MQTT_DeleteClient(MQTT_Client *mqttClient);
+> #ifndef C2NIM
+> void MQTT_InitLWT(MQTT_Client *mqttClient, uint8_t* will_topic, uint8_t* will_msg, uint8_t will_qos, uint8_t will_retain);
+> #else
+> void MQTT_InitLWT(MQTT_Client *mqttClient, char* will_topic, char* will_msg, uint8_t will_qos, uint8_t will_retain);
+> #endif
+> void MQTT_OnConnected(MQTT_Client *mqttClient, MqttCallback connectedCb);
+> void MQTT_OnDisconnected(MQTT_Client *mqttClient, MqttCallback disconnectedCb);
+> void MQTT_OnPublished(MQTT_Client *mqttClient, MqttCallback publishedCb);
+> void MQTT_OnTimeout(MQTT_Client *mqttClient, MqttCallback timeoutCb);
+> void MQTT_OnData(MQTT_Client *mqttClient, MqttDataCallback dataCb);
+> BOOL MQTT_Subscribe(MQTT_Client *client, char* topic, uint8_t qos);
+> BOOL MQTT_UnSubscribe(MQTT_Client *client, char* topic);
+> void MQTT_Connect(MQTT_Client *mqttClient);
+> void MQTT_Disconnect(MQTT_Client *mqttClient);
+> BOOL MQTT_Publish(MQTT_Client *client, const char* topic, const char* data, int data_length, int qos, int retain);
+> 
+> #ifdef C2NIM
+> #@
+> template MQTT_Publish*(client: ptr MQTT_Client; topic: cconststring; data: cconststring;
+>                        qos: cint; retain: cint): bool =
+>   MQTT_Publish(client, topic, data, cint(len(data)), qos, retain)
+> 
+> 
+> type
+>   mqtt_data_string* = tuple
+>     str: cstring
+>     start: uint32
+>     length: uint32
+> 
+> 
+> template new_mqtt_data_string*(s: cconststring; l: uint32, st: uint32 = 0): mqtt_data_string =
+>   (str: cast[cstring](s), start: st, length: l)
+> 
+> 
+> template new_mqtt_data_string*(s: mqtt_data_string, st: uint32): mqtt_data_string =
+>   (str: s.str, start: st, length: s.length)
+> 
+> 
+> proc mqtt_data_string_eq(str: string, data_str: cstring, start, length: uint32): bool =
+>   var i = int(start)
+>   var j = 0
+>   if len(str) != int(length - start):
+>     return false
+>   while i < int(length):
+>     if str[j] != data_str[i]:
+>       return false
+>     inc(i)
+>     inc(j)
+>   return true
+> 
+> 
+> proc `==`* (a: string, b: mqtt_data_string): bool {.inline.} =
+>   return mqtt_data_string_eq(a, b.str, b.start, b.length)
+> 
+> 
+> proc `==`* (b: mqtt_data_string, a: string): bool {.inline.} =
+>   return mqtt_data_string_eq(a, b.str, b.start, b.length)
+> @#
+> #endif
