@@ -40,6 +40,8 @@ nim_sdk_files = $(wildcard nim/*.nim)
 release_tag = $(shell (git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || git describe --tags) | sed -e "s/release-//")
 release_name = nim_esp8266_nonos_sdk-$(release_tag)
 
+mostlyclean_ignore = $(download_dir)
+
 V ?= $(VERBOSE)
 ifeq ("$(V)","1")
 Q :=
@@ -138,6 +140,7 @@ clean:
 	$(vecho) "CLEAN   $(BUILD_DIR) $(DIST_DIR)"
 	$(Q) rm -rf $(BUILD_DIR) $(DIST_DIR)
 
+mostlyclean: dirs := $(filter-out $(mostlyclean_ignore),$(wildcard $(BUILD_DIR)/*))
 mostlyclean:
-	$(vecho) "CLEAN   $(BUILD_DIR)/nonos-sdk"
-	$(Q) rm -rf $(BUILD_DIR)/nonos-sdk
+	$(vecho) "CLEAN   $(dirs)"
+	$(Q) rm -rf $(dirs)
