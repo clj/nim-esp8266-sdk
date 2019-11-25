@@ -1,2 +1,5 @@
 #mangle uint32_t uint32
 #mangle _ETSTIMER_ ETSTimer
+
+// #default type none
+// #default as template
