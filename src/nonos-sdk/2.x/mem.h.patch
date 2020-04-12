@@ -1,6 +1,10 @@
 --- SDK/include/mem.h	2017-05-05 10:01:41.000000000 +0000
-+++ BUILD/mem.h	2019-08-23 07:52:42.000000000 +0000
-@@ -42,45 +42,56 @@
++++ BUILD/mem.h	2020-04-12 23:53:26.000000000 +0000
+@@ -39,48 +39,60 @@
+ void vPortFree (void *p, const char *, unsigned);
+ void *pvPortZalloc (size_t sz, const char *, unsigned);
+ void *pvPortRealloc (void *p, size_t n, const char *, unsigned);
++void* pvPortCalloc(size_t count,size_t size,const char *,unsigned);
  
  #ifndef MEMLEAK_DEBUG
  #define MEMLEAK_DEBUG_ENABLE	0
@@ -11,7 +15,8 @@
 +#else
  #define os_free(s)        vPortFree(s, "", 0)
  #define os_malloc(s)      pvPortMalloc(s, "", 0)
- #define os_calloc(s)      pvPortCalloc(s, "", 0);
+-#define os_calloc(s)      pvPortCalloc(s, "", 0);
++#define os_calloc(l, s)   pvPortCalloc(l, s, "", 0);
  #define os_realloc(p, s)  pvPortRealloc(p, s, "", 0)
  #define os_zalloc(s)      pvPortZalloc(s, "", 0)
 -#else
