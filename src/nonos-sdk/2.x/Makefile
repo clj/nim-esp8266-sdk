@@ -18,9 +18,11 @@ endif
 
 headers = c_types.h eagle_soc.h espconn.h ets_sys.h gpio.h ip_addr.h \
 		  mem.h os_type.h osapi.h queue.h upgrade.h user_interface.h
+linker_scripts = eagle.app.v6.ld eagle.rom.addr.v6.ld
 sdk_sources = $(headers:%=$(SDK_DIR)/%)
 sdk_targets = $(headers:%=$(BUILD_DIR)/%)
 nim_targets = $(headers:%.h=$(BUILD_DIR)/%.nim)
+ld_targets = $(linker_scripts:%=$(BUILD_DIR)/ld/%)
 
 # XXX: the `cat` here is necessary on my virtualbox setup, or the start
 #      of the file goes missing...
@@ -45,7 +47,7 @@ endif
 .SECONDARY: $(sdk_targets)
 
 .PHONY: all
-all: $(nim_targets)
+all: $(nim_targets) $(ld_targets)
 
 $(BUILD_DIR)/%.h: $(SDK_DIR)/include/%.h %.h.$(SDK_VERSION_).patch
 	$(vecho) "PATCH   $@"
@@ -68,12 +70,26 @@ $(BUILD_DIR)/%.nim: $(BUILD_DIR)/%.h
 	$(vecho) "C2NIM   $@"
 	$(Q) $(C2NIM) --cdecl --header $< -o=$@ $(silence)
 
+$(BUILD_DIR)/ld/%.ld: $(SDK_DIR)/ld/%.ld %.ld.patch
+	$(vecho) "PATCH   $@"
+	$(Q) $(call patch_cmd)
+
+$(BUILD_DIR)/ld/%.ld: $(SDK_DIR)/ld/%.ld
+	$(vecho) "CP      $@"
+	$(Q) cp $< $@
+
 $(sdk_targets): | $(BUILD_DIR)
 $(nim_targets): | $(BUILD_DIR)
+$(nim_targets): | $(BUILD_DIR)/ld
 
 $(BUILD_DIR):
 	$(vecho) "MKDIR   $@"
 	$(Q) mkdir -p $(BUILD_DIR)
+
+
+$(BUILD_DIR)/ld:
+	$(vecho) "MKDIR   $@"
+	$(Q) mkdir -p $(BUILD_DIR)/ld
 
 
 .PHONY: clean

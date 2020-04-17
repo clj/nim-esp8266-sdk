@@ -16,6 +16,7 @@ macro section*(param: string, body: untyped) =
 const
   SECTION_ROM* = ".irom0.text"
   SECTION_RODATA* = ".irom.text"
+  SECTION_RAM* = ".iram.text"
 
 # See: https://github.com/nim-lang/Nim/pull/1537/commits/9a9cadf0a4839527264145c1419549cd225c687b
 type cconststring* {.importc: "const char *", nodecl.} = cstring

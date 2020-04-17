@@ -1,0 +1,25 @@
+--- SDK/ld/eagle.app.v6.ld	2018-06-08 08:20:36.000000000 +0000
++++ BUILD/ld/eagle.app.v6.ld	2020-04-17 13:21:58.000000000 +0000
+@@ -173,6 +173,8 @@
+     *libm.a:(.literal .text .literal.* .text.*)
+ 
+     *(.irom0.literal .irom.literal .irom.text.literal .irom0.text .irom.text)
++    *_app.a:(.literal.* .text.* .literal .text)
++
+     _irom0_text_end = ABSOLUTE(.);
+   } >irom0_0_seg :irom0_0_phdr
+ 
+@@ -208,6 +210,7 @@
+     *(.init.literal)
+     *(.init)
+     *(.literal .text .literal.* .text.* .stub .gnu.warning .gnu.linkonce.literal.* .gnu.linkonce.t.*.literal .gnu.linkonce.t.*)
++    *(.iram1.literal .iram.literal .iram.text.literal .iram1.text .iram.text)
+     *(.fini.literal)
+     *(.fini)
+     *(.gnu.version)
+@@ -226,4 +229,4 @@
+ }
+ 
+ /* get ROM code address */
+-INCLUDE "../ld/eagle.rom.addr.v6.ld"
++INCLUDE "eagle.rom.addr.v6.ld"
