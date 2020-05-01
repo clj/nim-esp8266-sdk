@@ -1,0 +1,56 @@
+--- SDK/include/mem.h	2020-03-24 09:47:17.000000000 +0000
++++ BUILD/mem.h	2020-04-29 23:43:28.000000000 +0000
+@@ -60,6 +60,12 @@
+ #else
+ #define MEMLEAK_DEBUG_ENABLE	1
+ 
++#@
++{.fatal: "NOT SUPPORTED IN NIM".}
++@#
++#error "NOT SUPPORTED IN NIM"
++
++/* #ifdef C2NIM
+ #define os_free(s) \
+ do{\
+ 	static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+@@ -77,7 +83,7 @@
+ 		static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+ 		pvPortMalloc(s, mem_debug_file, __LINE__,false);	\
+ 	})
+-    
++
+ #define os_calloc_iram(l, s)	\
+ 	({	\
+ 		static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+@@ -89,7 +95,7 @@
+ 		static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+ 		pvPortCalloc(l, s, mem_debug_file, __LINE__);	\
+ 	})
+-    
++
+ #define os_realloc(p, s)	\
+ 	({	\
+ 		static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+@@ -107,17 +113,17 @@
+ 		static const char mem_debug_file[] ICACHE_RODATA_ATTR STORE_ATTR = __FILE__;	\
+ 		pvPortZalloc(s, mem_debug_file, __LINE__);	\
+ 	})
+-    
++
++#endif */ /* C2NIM */
+ #endif
+ 
+-#ifdef MEM_DEFAULT_USE_DRAM
++/*#ifdef MEM_DEFAULT_USE_DRAM*/
+ #define os_malloc           os_malloc_dram
+ #define os_zalloc           os_zalloc_dram
+ #define os_calloc           os_calloc_dram
+-#else
++/*#else
+ #define os_malloc           os_malloc_iram
+ #define os_zalloc           os_zalloc_iram
+ #define os_calloc           os_calloc_iram
++#endif */
+ #endif
+-#endif
+-
