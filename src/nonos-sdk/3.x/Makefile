@@ -47,7 +47,7 @@ endif
 .SECONDARY: $(sdk_targets)
 
 .PHONY: all
-all: $(nim_targets) $(ld_targets)
+all: $(nim_targets) $(ld_targets) $(BUILD_DIR)/bin/check_sdk_version.sh
 
 $(BUILD_DIR)/%.h: $(SDK_DIR)/include/%.h %.h.$(SDK_VERSION_).patch
 	$(vecho) "PATCH   $@"
@@ -78,19 +78,26 @@ $(BUILD_DIR)/ld/%.ld: $(SDK_DIR)/ld/%.ld
 	$(vecho) "CP      $@"
 	$(Q) cp $< $@
 
+$(BUILD_DIR)/bin/check_sdk_version.sh: ../../tools/check_sdk_version.sh.in $(SDK_DIR)/VERSION
+	sed "s/_SHA_/$(shell sha1sum $(SDK_DIR)/VERSION | awk '{ print $$1 }')/;s/_VERSION_/$(SDK_VERSION)/" $< > $@
+	chmod a+x $@
+
 $(sdk_targets): | $(BUILD_DIR)
 $(nim_targets): | $(BUILD_DIR)
 $(nim_targets): | $(BUILD_DIR)/ld
+$(BUILD_DIR)/bin/check_sdk_version.sh: | $(BUILD_DIR)/bin
 
 $(BUILD_DIR):
 	$(vecho) "MKDIR   $@"
 	$(Q) mkdir -p $(BUILD_DIR)
 
-
 $(BUILD_DIR)/ld:
 	$(vecho) "MKDIR   $@"
 	$(Q) mkdir -p $(BUILD_DIR)/ld
 
+$(BUILD_DIR)/bin:
+	$(vecho) "MKDIR   $@"
+	$(Q) mkdir -p $(BUILD_DIR)/bin
 
 .PHONY: clean
 clean:

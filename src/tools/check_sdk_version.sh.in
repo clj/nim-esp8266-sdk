@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+version=_VERSION_
+if ! echo "_SHA_ $1/VERSION" | sha1sum --status -c - ; then
+	echo "Unexpected SDK version found, please check that $1 matches the Nim SDK version ($version)"
+	exit 1
+fi

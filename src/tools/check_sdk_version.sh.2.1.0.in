@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+version=_VERSION_
+if [ -f $1/VERSION ] ; then
+	echo "Unexpected SDK version found, please check that $1 matches the Nim SDK version ($version)"
+	exit 1
+fi
