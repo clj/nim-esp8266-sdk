@@ -4,6 +4,21 @@
 
 {.used.}
 
+when defined fota:
+  {.emit: """
+  #define FOTA
+  """.}
+
+
+when defined spiFlashSizeMap:
+  const spiFlashSizeMap {.strdefine.} = 0
+  {.emit: ["#define SPI_FLASH_SIZE_MAP ", spiFlashSizeMap].}
+
+
+when defined userBinAllocation:
+  const userBinAllocation {.strdefine.} = 0
+  {.emit: ["#define USER_BIN_ALLOCATION ", userBinAllocation].}
+
 
 {.emit: """
 #include "user_interface.h"
@@ -13,23 +28,17 @@
 #define EAGLE_IROM0TEXT_BIN_ADDR      (SYSTEM_PARTITION_CUSTOMER_BEGIN + 2)
 
 #ifndef SPI_FLASH_SIZE_MAP
-#define SPI_FLASH_SIZE_MAP 4
+#define SPI_FLASH_SIZE_MAP 5
 #endif
 
-#if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
+#ifndef USER_BIN_ALLOCATION
+#define USER_BIN_ALLOCATION 0x60000
+#endif
+
+#if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1) || \
+     (SPI_FLASH_SIZE_MAP == 2) || (SPI_FLASH_SIZE_MAP == 3) || \
+     (SPI_FLASH_SIZE_MAP == 4))
 #error "The flash map is not supported"
-#elif (SPI_FLASH_SIZE_MAP == 2)
-#define SYSTEM_PARTITION_RF_CAL_ADDR            0xfb000
-#define SYSTEM_PARTITION_PHY_DATA_ADDR            0xfc000
-#define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0xfd000
-#elif (SPI_FLASH_SIZE_MAP == 3)
-#define SYSTEM_PARTITION_RF_CAL_ADDR            0x1fb000
-#define SYSTEM_PARTITION_PHY_DATA_ADDR            0x1fc000
-#define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0x1fd000
-#elif (SPI_FLASH_SIZE_MAP == 4)
-#define SYSTEM_PARTITION_RF_CAL_ADDR            0x3fb000
-#define SYSTEM_PARTITION_PHY_DATA_ADDR            0x3fc000
-#define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0x3fd000
 #elif (SPI_FLASH_SIZE_MAP == 5)
 #define SYSTEM_PARTITION_RF_CAL_ADDR            0x1fb000
 #define SYSTEM_PARTITION_PHY_DATA_ADDR            0x1fc000
@@ -43,8 +52,13 @@
 #endif
 
 static const partition_item_t partition_table[] = {
+#ifndef FOTA
     { EAGLE_FLASH_BIN_ADDR,   0x00000, 0x10000},
-    { EAGLE_IROM0TEXT_BIN_ADDR, 0x10000, 0x60000},
+    { EAGLE_IROM0TEXT_BIN_ADDR, 0x10000, USER_BIN_ALLOCATION},
+#else
+    { SYSTEM_PARTITION_OTA_1, 0x01000, USER_BIN_ALLOCATION},
+    { SYSTEM_PARTITION_OTA_2, 0x101000, USER_BIN_ALLOCATION},
+#endif /* FOTA */
     { SYSTEM_PARTITION_RF_CAL, SYSTEM_PARTITION_RF_CAL_ADDR, 0x1000},
     { SYSTEM_PARTITION_PHY_DATA, SYSTEM_PARTITION_PHY_DATA_ADDR, 0x1000},
     { SYSTEM_PARTITION_SYSTEM_PARAMETER, SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR, 0x3000},
