@@ -1,2 +1,4 @@
 #mangle _r r
 #mangle _b b
+
+// #returns uint32 BIT

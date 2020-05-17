@@ -25,4 +25,8 @@ x;
 x;
 // #returns uint32 RTC_REG_READ
 
+
+// #returns uint32 GPIO_PIN_INT_TYPE_SET
+// #returns uint32 GPIO_PIN_INT_TYPE_GET
+
 #mangle uint32_t uint32
