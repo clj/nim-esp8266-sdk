@@ -46,7 +46,7 @@ libmqtt = $(BUILD_DIR)/esp_mqtt/firmware/libmqtt.a
 libmqtt_user_config = $(BUILD_DIR)/esp_mqtt/include/user_config.local.h
 mqtt_install = $(abspath $(libmqtt) $(mqtt_build_dir)/mqtt.h $(addprefix $(BUILD_DIR)/esp_mqtt/mqtt/include/,mqtt_msg.h queue.h ringbuf.h typedef.h))
 
-nim_sdk_files = $(wildcard nim/*.nim)
+nim_sdk_files = $(shell find nim/  -type f -name '*.nim')
 
 release_tag = $(shell (git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || git describe --tags) | sed -e "s/release-//")
 release_name = nim_esp8266_nonos_sdk-$(release_tag)
@@ -81,8 +81,11 @@ install: all |install-nim install-mqtt
 install-nim: $(nim_sdk_files)
 	$(vecho) "MKDIR   $(INSTALL_DIR)/nim-sdk"
 	$(Q) mkdir -p $(INSTALL_DIR)/nim-sdk/esp8266
-	$(vecho) "COPY    $(INSTALL_DIR)/nim-sdk"
-	$(Q) cp -r $^ $(INSTALL_DIR)/nim-sdk/esp8266
+	$(Q) for name in $(patsubst nim/%,%,$(nim_sdk_files)) ; do \
+		$(vechoe) "COPY    $$name" ; \
+		mkdir -p $(INSTALL_DIR)/nim-sdk/esp8266/$$(dirname $$name) && \
+		cp nim/$$name $(INSTALL_DIR)/nim-sdk/esp8266/$$name ; \
+	done
 
 install-dev: all |install-nim-dev install-mqtt-dev
 	$(vecho) "MKDIR   $(INSTALL_DIR)"
