@@ -1,1 +1,163 @@
-../2.x/user_interface.h.patch
+--- SDK/include/user_interface.h	2020-03-24 09:47:17.000000000 +0000
++++ BUILD/user_interface.h	2020-06-03 23:49:59.000000000 +0000
+@@ -25,6 +25,11 @@
+ #ifndef __USER_INTERFACE_H__
+ #define __USER_INTERFACE_H__
+ 
++#ifdef C2NIM
++#include "c_types.h"
++#include "gpio.h"
++#endif /* C2NIM */
++
+ #include "os_type.h"
+ #ifdef LWIP_OPEN_SRC
+ #include "lwip/ip_addr.h"
+@@ -32,6 +37,7 @@
+ #include "ip_addr.h"
+ #endif
+ 
++#ifndef C2NIM
+ #include "queue.h"
+ #include "user_config.h"
+ #include "spi_flash.h"
+@@ -41,6 +47,7 @@
+ #define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
+ #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+ #endif
++#endif /* C2NIM */
+ 
+ enum rst_reason {
+     REASON_DEFAULT_RST        = 0,
+@@ -62,6 +69,12 @@
+     uint32 depc;
+ };
+ 
++#ifndef C2NIM
++typedef enum rst_reason rst_reason;
++typedef struct rst_info rst_info;
++typedef struct station_config station_config;
++#endif
++
+ struct rst_info* system_get_rst_info(void);
+ 
+ #define UPGRADE_FW_BIN1         0x00
+@@ -90,6 +103,13 @@
+     USER_TASK_PRIO_MAX
+ };
+ 
++#ifdef C2NIM
++#@
++template system_os_task*(task: os_task_t, prio: uint8, queue: openArray[os_event_t]): untyped =
++  original_system_os_task(task, prio, cast[ptr os_event_t](addr queue), uint8(len(queue)))
++@#
++#endif /* C2NIM */
++
+ bool system_os_task(os_task_t task, uint8 prio, os_event_t *queue, uint8 qlen);
+ bool system_os_post(uint8 prio, os_signal_t sig, os_param_t par);
+ 
+@@ -139,7 +159,7 @@
+ bool system_update_cpu_freq(uint8 freq);
+ uint8 system_get_cpu_freq(void);
+ 
+-enum flash_size_map {
++typedef enum flash_size_map {
+     FLASH_SIZE_4M_MAP_256_256 = 0,  /**<  Flash size : 4Mbits. Map : 256KBytes + 256KBytes */
+     FLASH_SIZE_2M,                  /**<  Flash size : 2Mbits. Map : 256KBytes */
+     FLASH_SIZE_8M_MAP_512_512,      /**<  Flash size : 8Mbits. Map : 512KBytes + 512KBytes */
+@@ -151,7 +171,7 @@
+                                            Flash size : 32Mbits. Map : 2048KBytes + 2048KBytes */
+     FLASH_SIZE_64M_MAP_1024_1024,     /**<  Flash size : 64Mbits. Map : 1024KBytes + 1024KBytes */
+     FLASH_SIZE_128M_MAP_1024_1024     /**<  Flash size : 128Mbits. Map : 1024KBytes + 1024KBytes */
+-};
++} flash_size_map;
+ 
+ enum flash_size_map system_get_flash_size_map(void);
+ 
+@@ -201,7 +221,13 @@
+ bool wifi_set_broadcast_if(uint8 interface);
+ 
+ struct bss_info {
++    #ifdef C2NIM
++    struct {
++        struct bss_info *stqe_next;  /* next element */
++    } next;
++    #else
+     STAILQ_ENTRY(bss_info)     next;
++    #endif
+ 
+     uint8 bssid[6];
+     uint8 ssid[32];
+@@ -223,9 +249,35 @@
+     uint32_t reserved:28;
+ };
+ 
++#ifdef C2NIM
++#@
++{. emit: """#include "queue.h"""" .}
++proc STAILQ_NEXT*(elm: ptr bss_info): ptr bss_info =
++  {. emit: """`result` = STAILQ_NEXT(`elm`, next);""" .}
++@#
++#endif /* C2NIM */
++
+ typedef struct _scaninfo {
++    #ifdef C2NIM
++    struct {
++        struct bss_info *stqh_first;/* first element */
++        struct bss_info **stqh_last;/* addr of last next element */
++    } pbss;
++    #else /* C2NIM */
+     STAILQ_HEAD(, bss_info) *pbss;
++    #endif /* C2NIM */
++
++    void *pespconn;
++    /* FIXMME: C2NIM does not like two ifdefs back to back
++               in fact, a comment seems to make it unhappy too, hence why
++               this is here...
++
++    #ifdef C2NIM
++    void *pespconn;
++    #else
+     struct espconn *pespconn;
++    #endif
++    */
+     uint8 totalpage;
+     uint8 pagenum;
+     uint8 page_sn;
+@@ -352,7 +404,13 @@
+ bool wifi_softap_set_config_current(struct softap_config *config);
+ 
+ struct station_info {
+-    STAILQ_ENTRY(station_info)    next;
++    #ifdef C2NIM
++    struct {
++        struct station_info *sle_next;  /* next element */
++    } next;
++    #else
++    STAILQ_ENTRY(station_info)  next;
++    #endif
+ 
+     uint8 bssid[6];
+     struct ip_addr ip;
+@@ -432,6 +490,10 @@
+     MAX_SLEEP_T
+ };
+ 
++#ifndef C2NIM
++typedef enum sleep_type sleep_type;
++#endif
++
+ bool wifi_set_sleep_type(enum sleep_type type);
+ enum sleep_type wifi_get_sleep_type(void);
+ bool wifi_set_sleep_level(enum sleep_level level);
+@@ -769,9 +831,9 @@
+     SYSTEM_PARTITION_SSL_SERVER_CA,
+     SYSTEM_PARTITION_WPA2_ENTERPRISE_CERT_PRIVKEY,
+     SYSTEM_PARTITION_WPA2_ENTERPRISE_CA,
+-    
++
+     SYSTEM_PARTITION_CUSTOMER_BEGIN = 100,  /* user can define partition after here */
+-    SYSTEM_PARTITION_MAX
++    SYSTEM_PARTITION_MAX = 200,
+ } partition_type_t;
+ 
+ typedef struct {
