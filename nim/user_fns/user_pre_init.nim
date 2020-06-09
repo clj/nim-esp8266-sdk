@@ -28,15 +28,25 @@ when defined userBinAllocation:
 #define EAGLE_IROM0TEXT_BIN_ADDR      (SYSTEM_PARTITION_CUSTOMER_BEGIN + 2)
 
 #ifndef SPI_FLASH_SIZE_MAP
-#define SPI_FLASH_SIZE_MAP 5
+#define SPI_FLASH_SIZE_MAP 2
 #endif
 
 #ifndef USER_BIN_ALLOCATION
 #define USER_BIN_ALLOCATION 0x60000
 #endif
 
-#if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1) || \
-     (SPI_FLASH_SIZE_MAP == 3) || (SPI_FLASH_SIZE_MAP == 4))
+/*
+  size_map     layout                            esptool.py arg
+  --------     ------------------------------    --------------
+  0              512 KB (256 KB + 256 KB)          512KB
+  1              256 KB                            256KB
+  2              1024 KB (512 KB + 512 KB)         1MB
+  3              2048 KB (512 KB + 512 KB)         2MB
+  4              4096 KB (512 KB + 512 KB)         4MB
+  5              2048 KB (1024 KB + 1024 KB)       2MB-c1
+  6              4096 KB (1024 KB + 1024 KB)       4MB-c1
+*/
+#if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
 #error "The flash map is not supported"
 #elif (SPI_FLASH_SIZE_MAP == 2)
 #define SYSTEM_PARTITION_OTA_1_ADDR            0x01000
@@ -44,6 +54,18 @@ when defined userBinAllocation:
 #define SYSTEM_PARTITION_RF_CAL_ADDR            0xfb000
 #define SYSTEM_PARTITION_PHY_DATA_ADDR            0xfc000
 #define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0xfd000
+#elif (SPI_FLASH_SIZE_MAP == 3)
+#define SYSTEM_PARTITION_OTA_1_ADDR            0x01000
+#define SYSTEM_PARTITION_OTA_2_ADDR            0x81000
+#define SYSTEM_PARTITION_RF_CAL_ADDR            0x1fb000
+#define SYSTEM_PARTITION_PHY_DATA_ADDR            0x1fc000
+#define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0x1fd000
+#elif (SPI_FLASH_SIZE_MAP == 4)
+#define SYSTEM_PARTITION_OTA_1_ADDR            0x01000
+#define SYSTEM_PARTITION_OTA_2_ADDR            0x81000
+#define SYSTEM_PARTITION_RF_CAL_ADDR            0x3fb000
+#define SYSTEM_PARTITION_PHY_DATA_ADDR            0x3fc000
+#define SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR        0x3fd000
 #elif (SPI_FLASH_SIZE_MAP == 5)
 #define SYSTEM_PARTITION_OTA_1_ADDR            0x01000
 #define SYSTEM_PARTITION_OTA_2_ADDR            0x101000
