@@ -17,7 +17,8 @@ endif
 endif
 
 headers = c_types.h eagle_soc.h espconn.h ets_sys.h gpio.h ip_addr.h \
-		  mem.h os_type.h osapi.h queue.h upgrade.h user_interface.h
+		  mem.h os_type.h osapi.h queue.h upgrade.h user_interface.h \
+		  spi_flash.h
 linker_scripts = eagle.app.v6.ld eagle.app.v6.new.1024.app1.ld eagle.app.v6.new.1024.app2.ld eagle.app.v6.new.2048.ld eagle.rom.addr.v6.ld
 sdk_sources = $(headers:%=$(SDK_DIR)/%)
 sdk_targets = $(headers:%=$(BUILD_DIR)/%)
