@@ -32,21 +32,30 @@ converter `cstring->cconststring`*(s: cstring): cconststring {.inline.} =
   cast[cconststring](s)
 
 
-proc set_inner*(dst: var openarray[uint8], src: string) =
-  var i = 0
-  while i < len(src):
-    dst[i] = cast[uint8](src[i])
-    inc(i)
-  dst[i] = cast[uint8](0)
-
-
-template set_string*(dst: var openarray[uint8], src: string) =
-  set_inner(dst, src)
-
-
-template set_string*[T](dst: var array[T, uint8], src: static string) =
-  when len(src) == len(dst):
-    {.error: "value '" & src & "' too long, no space for null char in destination array of length " & $len(dst) .}
+template setString*[N, T: uint8 | byte | char](dst: var array[N, T], src: static string) =
   when len(src) > len(dst):
     {.error: "length of value '" & src & "' (" & $len(src) & ") does not fit in destnation array of lenth: " & $len(dst) .}
-  set_inner(dst, src)
+  dst = toArray(src, len(dst), T)
+
+
+proc setString*[N, T: uint8 | byte | char](dst: var array[N, T], src: string) =
+  for i in 0..<len(src):
+    dst[i] = T(src[i])
+  for i in len(src)..<len(dst):
+    dst[i] = 0
+
+
+macro toArray*(str: static string, length: static int, dstType: typed = char): untyped =
+  result = nnkBracket.newTree()
+  for ch in str:
+    let node = nnkCall.newTree(
+        dstType,
+        newLit(ch)
+      )
+    result.add(node)
+  for _ in 0..(length - len(str) - 1):
+    let node = nnkCall.newTree(
+        dstType,
+        newLit('\0')
+      )
+    result.add(node)
