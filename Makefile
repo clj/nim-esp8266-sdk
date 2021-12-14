@@ -1,4 +1,4 @@
-SDK_VERSIONS	?= 3.0.3 2.2.1 2.2.0 2.1.0
+SDK_VERSIONS	?= 3.0.5 3.0.3 2.2.1 2.2.0 2.1.0
 CURL		?= curl
 SDK_BASE_URL	?= https://github.com/espressif/ESP8266_NONOS_SDK/archive/
 BUILD_DIR	?= build
@@ -31,6 +31,7 @@ SHA_256_SUM_2_2_1 = ae218301870ca0d39a939febeccb29cbf75c3f5959d7c521e513bbe8186a
 SHA_256_SUM_2_2_0 = fe32a54f59004177cf0dafa0e51ae24b948090a847dde6f0383a7776aabbf88a
 SHA_256_SUM_2_1_0 = aefafa85ed32688da2e523e6d0affb21c45137408edb298183a92765cee7589f
 SHA_256_SUM_3_0_3 = d1b604e3c794d3d1d4fac9d27adfa60db5f7091444ee58a979a328ebf1811f05
+SHA_256_SUM_3_0_5 = b126ca033288464aeb0024ebddc45cd9e4543e911f5c47c5fff815552a1eebdb
 
 download_dir = $(BUILD_DIR)/downloads
 nonos_sdk_build_dir = $(BUILD_DIR)/nonos-sdk
@@ -180,6 +181,7 @@ $(nonos_sdk_build_dir)/2.2.1: src_version_dir=2.x
 $(nonos_sdk_build_dir)/2.2.0: src_version_dir=2.x
 $(nonos_sdk_build_dir)/2.1.0: src_version_dir=2.x
 $(nonos_sdk_build_dir)/3.0.3: src_version_dir=3.x
+$(nonos_sdk_build_dir)/3.0.5: src_version_dir=3.x
 
 $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): | $(download_dir)/ESP8266_NONOS_SDK-$(version)))
 $(foreach version,$(SDK_VERSIONS),$(eval $(nonos_sdk_build_dir)/$(version): sdk_dir=$(abspath $(download_dir)/ESP8266_NONOS_SDK-$(version))))
