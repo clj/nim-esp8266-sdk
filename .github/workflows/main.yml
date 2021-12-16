@@ -1,0 +1,41 @@
+name: Build
+on: push
+
+jobs:
+  build_sdk_job:
+    name: Build
+    runs-on: ubuntu-latest
+    container:
+      image: nimesp/esp8266-gcc:latest
+    steps:
+      - name: Get release date
+        id: get_release_date
+        run: |
+          release_date=$(echo ${{ github.ref_name }} | cut -d- -f2)
+          echo "::set-output name=release_date::$release_date"
+        if: startsWith(github.ref_name, 'release-')
+      - name: Checkout nim-esp8266-sdk
+        uses: actions/checkout@v2
+      - name: Checkout c2nim-esp8266
+        uses: actions/checkout@v2
+        with:
+          repository: clj/c2nim-esp8266
+          path: 'c2nim-esp8266'
+          submodules: true
+      - run: nim --version
+      - run: nimble bootstrap -y
+        working-directory: c2nim-esp8266
+      - run: nimble build -y
+        working-directory: c2nim-esp8266
+      - run: make C2NIM=c2nim-esp8266/c2nim_esp8266
+      - run: make C2NIM=c2nim-esp8266/c2nim_esp8266 dist RELEASE_TAG=${{ steps.get_release_date.outputs.release_date }}
+        if: ${{ startsWith(github.ref_name, 'release-') }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref_name, 'release-')
+        with:
+          body_path: ${{ github.workspace }}/release-notes/${{ steps.get_release_date.outputs.release_date }}.md
+          files:
+            dist/nim_esp8266_nonos_sdk-*
+          fail_on_unmatched_files: true
