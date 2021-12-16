@@ -49,7 +49,7 @@ mqtt_install = $(abspath $(libmqtt) $(mqtt_build_dir)/mqtt.h $(addprefix $(BUILD
 
 nim_sdk_files = $(shell find nim/  -type f -name '*.nim')
 
-release_tag = $(shell (git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || git describe --tags) | sed -e "s/release-//")
+release_tag = $(shell (git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || git describe --tags --always) | sed -e "s/release-//")
 release_name = nim_esp8266_nonos_sdk-$(release_tag)
 
 mostlyclean_ignore = $(download_dir)
