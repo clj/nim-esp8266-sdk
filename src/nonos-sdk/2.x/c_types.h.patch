@@ -1,5 +1,5 @@
 --- SDK/include/c_types.h	2021-10-15 11:40:39.000000000 +0000
-+++ BUILD/c_types.h	2021-12-12 23:59:14.000000000 +0000
++++ BUILD/c_types.h	2021-12-16 22:28:26.000000000 +0000
 @@ -25,6 +25,8 @@
  #ifndef _C_TYPES_H_
  #define _C_TYPES_H_
@@ -33,22 +33,23 @@
  #define DMEM_ATTR __attribute__((section(".bss")))
  #define SHMEM_ATTR
  
-@@ -102,6 +109,8 @@
+@@ -102,15 +109,17 @@
  
  #define STORE_ATTR __attribute__((aligned(4)))
  
 +#include <stdbool.h>
-+#if 0
  #ifndef __cplusplus
- typedef unsigned char   bool;
+-typedef unsigned char   bool;
++//typedef unsigned char   bool;
  #define BOOL            bool
-@@ -109,8 +118,10 @@
- #define false           (0)
+-#define true            (1)
+-#define false           (0)
++//#define true            (1)
++//#define false           (0)
  #define TRUE            true
  #define FALSE           false
--
-+#endif
  
+-
  #endif /* !__cplusplus */
  
 +#endif /* C2NIM */
