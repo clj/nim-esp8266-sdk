@@ -6,7 +6,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     container:
-      image: nimesp/esp8266-gcc:latest
+      image: ghcr.io/clj/esp8266-gcc:latest
     steps:
       - name: Get release date
         id: get_release_date
